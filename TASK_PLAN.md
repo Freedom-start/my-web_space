@@ -266,11 +266,11 @@
 
 ## Phase 9 — Deployment
 
-- [~] TASK-901：⚠️ 高优先——GitHub 仓库与首次提交（本地部分完成 2026-09-06）
-  - 目标：本地备份提交 ✅（commit 0807d26，47 文件）；**remote 连接待手动操作**
+- [x] TASK-901：⚠️ 高优先——GitHub 仓库与首次提交 ✅ 2026-09-06
+  - 目标：完整代码已推送到 github.com/Freedom-start/my-web_space（master 分支，含 v1 与 Phase 2 两个提交）
   - 已核查：`.gitignore` 覆盖 .env*/node_modules/.next；secrets 扫描零命中
-  - 待手动：① GitHub 网页创建仓库（建议 Private，名为 my-space）② `git remote add origin git@github.com:<用户名>/my-space.git` ③ `git push -u origin master`（gh CLI 未安装，无法代为创建）
-  - 完成标准：remote 有完整代码，clone 后 `pnpm install && pnpm build` 可通过
+  - 网络说明：GitHub 直连被重置，本仓库已配置 git 走本地代理 127.0.0.1:7892（仅此仓库生效，代理关闭时推送会失败）
+  - 完成标准：remote 有完整代码 ✅（clone 后 pnpm install && pnpm build 可通过）
 - [ ] TASK-902：生产构建流水线确认
   - 目标：Node 版本固定（package.json engines 或 .nvmrc）、pnpm 版本一致、CI（GitHub Actions 跑 lint+build）可选
   - 修改范围：仓库配置
@@ -308,4 +308,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、Phase 2 已完成。遗留：TASK-009/010/011（等待真实姓名与域名）、TASK-901 remote 推送（等待手动创建 GitHub 仓库）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1、Phase 2 已完成。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
