@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #05060f;
+  --background-soft: #0a0c1c;
+  --foreground: #e6e9f5;
+  --muted: #9aa3c0;
+  --accent: #5b8cff;
+  --accent-2: #a06bff;
+  --accent-3: #38e8d0;
+  --line: rgba(140, 160, 255, 0.14);
+  --card: rgba(16, 20, 42, 0.55);
+}
+
+[data-theme="light"] {
+  --background: #f2f4fb;
+  --background-soft: #ffffff;
+  --foreground: #141a30;
+  --muted: #5a6285;
+  --accent: #3b62d9;
+  --accent-2: #7c3aed;
+  --accent-3: #0d9488;
+  --line: rgba(30, 50, 120, 0.16);
+  --card: rgba(255, 255, 255, 0.7);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-soft: var(--background-soft);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-line: var(--line);
+  --color-card: var(--card);
+  --font-sans: var(--font-noto-sc), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  overflow-x: hidden;
+}
+
+/* 键盘可达性：所有可交互元素统一的 focus 态 */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 8px;
+}
+
+/* 细噪点覆盖层，增加质感 */
+.noise-overlay::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-gradient {
+  background: linear-gradient(
+    100deg,
+    var(--accent) 0%,
+    var(--accent-2) 55%,
+    var(--accent-3) 110%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 自定义光标跟随（仅桌面端由 JS 启用）：保留原生光标，小点 + 延迟外圈 */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 9999px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.cursor-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.28s ease,
+    background-color 0.28s ease;
+}
+
+.cursor-ring-inner[data-state="active"] {
+  transform: scale(1.7);
+  border-color: color-mix(in srgb, var(--accent-3) 80%, transparent);
+  background: color-mix(in srgb, var(--accent-3) 7%, transparent);
+}
+
+[data-theme="light"] .scene-canvas {
+  opacity: 0.18;
+}
+
+/* glow-ring：默认仅细边框，hover / 键盘聚焦时浮现光晕（对应 DESIGN.md 卡片 hover 态） */
+.glow-ring {
+  box-shadow: 0 0 0 1px var(--line);
+  transition: box-shadow 0.5s ease;
+}
+
+.glow-ring:hover,
+.glow-ring:focus-within {
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 0 40px -12px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float-y {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-3) 60%, transparent);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes intro-bar {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.intro-bar {
+  animation: intro-bar var(--intro-duration, 950ms) linear forwards;
+}
+
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-x 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-y,
+  .animate-pulse-dot,
+  .marquee-track {
+    animation: none;
+  }
 }
