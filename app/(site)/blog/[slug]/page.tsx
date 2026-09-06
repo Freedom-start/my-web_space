@@ -6,6 +6,7 @@ import { getPost, getAdjacentPosts, getAllSlugs } from "@/lib/blog";
 import { siteName, ownerName, siteUrl } from "@/data/profile";
 import { Reveal } from "@/components/ui/Reveal";
 import ReadingProgress from "@/components/blog/ReadingProgress";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const dynamicParams = false;
 
@@ -108,10 +109,7 @@ export default async function BlogPostPage({
     <>
       <ReadingProgress />
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
 
       <article className="relative mx-auto max-w-3xl px-6 pb-24 pt-32 sm:pt-36">
         <Reveal>

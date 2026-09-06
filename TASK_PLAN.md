@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 6/7 审计轮完成：TASK-601/602/604/605/606/701/703/704）
+> 最近更新：2026-09-06（Phase 8 完成TASK-801/802/804：sitemap + robots + 结构化数据；803/805 待域名）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -237,22 +237,22 @@
 
 > 已完成：title / description / viewport(themeColor) / canonical / robots 字段 / OG 全套 / Twitter 全套 / OG 图 / favicon。
 
-- [ ] TASK-801：sitemap
-  - 目标：`app/sitemap.ts`（MetadataRoute.sitemap）——首页 + 未来 /blog/[slug]
+- [x] TASK-801：sitemap ✅ 2026-09-06
+  - 结论：`app/sitemap.ts` —— 首页（priority 1）+ 4 篇文章（从内容目录实读，lastmod 取 frontmatter 日期）；域名全部来自 siteUrl
   - 修改范围：新增 `app/sitemap.ts`
-  - 完成标准：/sitemap.xml 输出正确域名
-- [ ] TASK-802：robots.txt
-  - 目标：`app/robots.ts` 允许全站 + 指向 sitemap；注意与 metadata.robots 字段（meta 标签）职责不同、并存不冲突
+  - 完成标准：/sitemap.xml 输出 5 条 URL 实测 ✅
+- [x] TASK-802：robots.txt ✅ 2026-09-06
+  - 结论：`app/robots.ts` —— User-Agent * Allow / + Sitemap 指向 siteUrl/sitemap.xml；与 metadata.robots meta 标签职责不同、并存无冲突（实测两者同时输出）
   - 修改范围：新增 `app/robots.ts`
-  - 完成标准：/robots.txt 正确
+  - 完成标准：/robots.txt 正确 ✅
 - [ ] TASK-803：metadataBase 域名落定
   - 目标：真实域名替换占位（联动 Phase 1 TASK-010 / Phase 9 TASK-907）
   - 修改范围：`app/layout.tsx`
   - 完成标准：线上分享卡片可访问
-- [ ] TASK-804：Structured Data（JSON-LD）
-  - 目标：WebSite + Person（首页）、Article（博客文章，联动 TASK-307）
-  - 修改范围：layout / blog page
-  - 完成标准：Google Rich Results 测试通过
+- [x] TASK-804：Structured Data（JSON-LD）✅ 2026-09-06
+  - 结论：首页新增 WebSite + Person JSON-LD（仅真实字段：name/url/sameAs=[GitHub]，不虚构 jobTitle/employer）；文章 Article JSON-LD 确认使用真实 frontmatter（headline/description/datePublished/author/url）且单实例不重复；提取共享组件 `components/seo/JsonLd.tsx`；双页 JSON 合法性解析实测通过、无 hydration 问题
+  - 修改范围：`app/(site)/page.tsx`、`app/(site)/blog/[slug]/page.tsx`、新增 `components/seo/JsonLd.tsx`
+  - 完成标准：JSON 合法、script type 正确、无重复 ✅（Google Rich Results 上线后复核）
 - [ ] TASK-805：apple-icon PNG
   - 目标：同 Phase 1 TASK-011，此处为 SEO/品牌入口复查
   - 修改范围：`app/apple-icon.png`
@@ -306,4 +306,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、2、3 已完成；Phase 6/7 审计轮完成（601/602/604/605/606/701/703/704，704 为 [~]）；剩余 Phase 4（Projects）/Phase 8（SEO 可选项）/Phase 9（部署）与可选项 309/310/603/607/702/705。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1、2、3 已完成；Phase 6/7 审计轮完成；Phase 8 完成 801/802/804（803/805 待域名）。剩余：Phase 4（Projects）、Phase 9（部署）、可选任务 309/310/603/607/702/705/805。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
