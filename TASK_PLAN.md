@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 8 完成TASK-801/802/804：sitemap + robots + 结构化数据；803/805 待域名）
+> 最近更新：2026-09-06（Phase 9 部署准备：TASK-902/903 完成；704 升级为 [x]）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -224,10 +224,10 @@
 - [x] TASK-703：对比度自动化扫描 ✅ 2026-09-06
   - 结果（WCAG 公式实测）：正文 16.68:1 ✅ / muted 8.06 ✅ / muted-on-card 7.53 ✅ / accent 链接 6.39 ✅ / accent-3 标签 13.11 ✅；Lighthouse 唯一 a11y 扣分=主 CTA 白字 on accent 3.16:1——**记录为设计例外**（DESIGN.md 规定白字按钮；修复需深色文字=设计方向决策，待定）；修复残留 text-muted/70（4.25:1→8.06）于 Blog/Footer/LearningMap
   - 修复：`components/blog/Blog.tsx`、`app/(site)/blog/[slug]/page.tsx`、`components/contact/Footer.tsx`、`components/learning/LearningMap.tsx`
-- [~] TASK-704：prefers-reduced-motion 回归（代码路径全验证；OS 级模拟受环境限制）
-  - 已验证（代码路径逐项）：Lenis 跳过 ✅ / GSAP 门控跳过（内容直接可见，无动画依赖隐藏）✅ / Intro 跳过 ✅ / CursorGlow 禁用 ✅ / MotionConfig user ✅ / CSS 动画停用 ✅ / **WebGL 新增 frameloop=never 完全静止** ✅ / Hero 兜底（透明度不会永久隐藏，本环境实测恢复）✅
-  - 局限：嵌入式浏览器无法注入 OS 级 prefers-reduced-motion 模拟，运行时全站走查需真实浏览器 DevTools 复核（Rendering 面板 → emulate CSS media）
-  - 修复：`components/background/SceneBackground.tsx`
+- [x] TASK-704：prefers-reduced-motion 回归 ✅ 2026-09-06（真实 Chrome --force-prefers-reduced-motion 完成回归）
+  - 方法：系统 Chrome headless `--force-prefers-reduced-motion`（真实 OS 级媒体查询模拟）+ dump-dom / 截图，覆盖 / 与 /blog/fastapi-from-0-to-1
+  - 结果：Lenis 类名无 ✅ / Hero 无隐藏内联样式（内容完整可见）✅ / Intro 无残留 ✅ / ReadingProgress 合理降级（不渲染）✅ / WebGL frameloop=never 静止 ✅ / 文章正文可访问 ✅ / Navbar 正常 ✅
+  - 修复：`components/background/SceneBackground.tsx`（本轮新增 frameloop=never 分支）
 - [ ] TASK-705：焦点可见性回归项固化
   - 目标：新组件 checklist 中加入 focus-visible 检查（联动 Phase 5 清单）
   - 修改范围：仅本文件
@@ -269,14 +269,15 @@
   - 已核查：`.gitignore` 覆盖 .env*/node_modules/.next；secrets 扫描零命中
   - 网络说明：GitHub 直连被重置，本仓库已配置 git 走本地代理 127.0.0.1:7892（仅此仓库生效，代理关闭时推送会失败）
   - 完成标准：remote 有完整代码 ✅（clone 后 pnpm install && pnpm build 可通过）
-- [ ] TASK-902：生产构建流水线确认
-  - 目标：Node 版本固定（package.json engines 或 .nvmrc）、pnpm 版本一致、CI（GitHub Actions 跑 lint+build）可选
-  - 修改范围：仓库配置
-  - 完成标准：CI 绿灯或本地双环境验证
-- [ ] TASK-903：Environment variables 规划
-  - 目标：当前无 secrets；Phase 4 若用 GitHub API（token）则走 `GITHUB_TOKEN` env，不进库
-  - 修改范围：`.env.local` 模板说明 / hosting 后台
-  - 完成标准：无硬编码密钥
+- [x] TASK-902：生产构建流水线确认 ✅ 2026-09-06
+  - 结论：Node 推荐 22/24 LTS（Next 16 要求 >=20.9，本地 24.14 验证通过）；engines.node=">=20.9.0" 已加入 package.json；.nvmrc=24；新增最小 CI（GitHub Actions：checkout → pnpm setup（读 packageManager）→ Node 24 → frozen-lockfile install → lint → build）
+  - 修改范围：`package.json`、`.nvmrc`、`.github/workflows/ci.yml`
+  - 完成标准：本地 lint+build 通过 ✅；CI 首次 push 后在 GitHub Actions 页面确认绿灯
+- [x] TASK-903：Environment variables 规划 ✅ 2026-09-06
+  - 结果：全项目 secret 扫描零命中；无 .env 文件；.gitignore 已覆盖 .env*；版本控制中无敏感文件。**未创建 .env.example**（当前零环境变量，创建空模板无意义）
+  - 未来设计（Phase 4 联动）：需要 GitHub API 时在 `.env.local`（已被 gitignore）放可选 `GITHUB_TOKEN`，构建时代码经 `process.env.GITHUB_TOKEN` 读取；公开仓库数据用匿名限额（60 req/h）亦可，token 仅用于提升限额
+  - 修改范围：无代码改动
+  - 完成标准：无硬编码密钥 ✅
 - [ ] TASK-904：域名购买与 DNS
   - 目标：确认 freedom.space 可注册性或选择替代域名
   - 修改范围：注册商配置
@@ -306,4 +307,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、2、3 已完成；Phase 6/7 审计轮完成；Phase 8 完成 801/802/804（803/805 待域名）。剩余：Phase 4（Projects）、Phase 9（部署）、可选任务 309/310/603/607/702/705/805。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1/2/3 完成、Phase 6/7 审计完成、Phase 8 完成 801/802/804、Phase 9 完成 901/902/903。剩余：TASK-803/805（待域名）、TASK-904~909（域名/部署上线）、Phase 4（Projects）、可选 309/310/603/607/702/705。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
