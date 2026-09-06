@@ -8,7 +8,7 @@ export default function Projects() {
         eyebrow="Projects / 02"
         title="Selected work & experiments"
         accent={["work", "&", "experiments"]}
-        description="每个项目都是一次完整的学习闭环：从需求、架构到实现与优化。"
+        description="这里会逐步记录我完成的项目与实验。"
       />
       <ProjectList />
     </section>

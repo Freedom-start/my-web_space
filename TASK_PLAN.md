@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06
+> 最近更新：2026-09-06（Phase 2 执行完成）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -63,27 +63,27 @@
 
 ## Phase 2 — Content（当前位置）
 
-- [ ] TASK-101：About 真实内容
+- [x] TASK-101：About 真实内容 ✅ 2026-09-06（Status 改 Building & learning；简介注明本站即实践项目）
   - 目标：两段自述 + FACTS（Major / Focus / Status）替换为真实、可长期成立的内容；确认 `Status: Open to internships` 是否属实
   - 修改范围：`components/about/About.tsx` 文案
   - 完成标准：无占位语义、信息真实、中英混排符合 DESIGN.md Typography
-- [ ] TASK-102：Technology Constellation 校对
+- [x] TASK-102：Technology Constellation 校对 ✅ 2026-09-06（FastAPI/MySQL 降为 learning，保守原则）
   - 目标：`data/skills.ts` 8 个节点与 core/learning/exploring 分级反映真实水平
   - 修改范围：`data/skills.ts`
   - 完成标准：节点状态与自评一致，连线关系合理
-- [ ] TASK-103：Learning Journey 真实内容
+- [x] TASK-103：Learning Journey 真实内容 ✅ 2026-09-06（done 注释加"基础"限定，避免过度声称）
   - 目标：`data/skills.ts` learningNodes 的 done/active/upcoming 与 note 反映当前学习状态
   - 修改范围：`data/skills.ts`
   - 完成标准：地图是"当前真实状态"，而非演示数据
-- [ ] TASK-104：Contact 内容定稿
+- [x] TASK-104：Contact 内容定稿 ✅ 2026-09-06（检查后无需改动：渠道真实、层级完整）
   - 目标：三卡渠道与主 CTA 文案定稿（Email/WeChat/GitHub 已真实）；确认是否补充其他渠道
   - 修改范围：`components/contact/Contact.tsx`、`data/profile.ts`
   - 完成标准：渠道完整、无多余占位语义
-- [ ] TASK-105：Footer 文案定稿
+- [x] TASK-105：Footer 文案定稿 ✅ 2026-09-06（tagline 符合 Digital Space 方向，保留；年份已动态）
   - 目标：tagline "built in the dark, shipped to the stars." 确认保留或替换；年份已动态
   - 修改范围：`components/contact/Footer.tsx`
   - 完成标准：品牌语气与 B 方向一致
-- [ ] TASK-106：Projects 区域描述文案微调
+- [x] TASK-106：Projects 区域描述文案微调 ✅ 2026-09-06（改为中性表达"这里会逐步记录我完成的项目与实验。"）
   - 目标："每个项目都是一次完整的学习闭环…" 与 Coming Soon 占位并存略冲突，改为中性引导文案（真实项目上线后恢复）
   - 修改范围：`components/projects/Projects.tsx` 描述行
   - 完成标准：文案与占位状态自洽
@@ -266,9 +266,10 @@
 
 ## Phase 9 — Deployment
 
-- [ ] TASK-901：⚠️ 高优先——GitHub 仓库与首次提交
-  - 目标：当前所有工作（组件/数据/品牌/SEO）均为未提交状态且无 remote——存在本地丢失风险。创建 GitHub 私有/公开仓库，整理提交（一个干净的 feature commit 或分批按 Phase 提交）
-  - 修改范围：git remote + commit；核查 `.gitignore`（AGENTS.md 自动生成块的提交策略见该文件说明）
+- [~] TASK-901：⚠️ 高优先——GitHub 仓库与首次提交（本地部分完成 2026-09-06）
+  - 目标：本地备份提交 ✅（commit 0807d26，47 文件）；**remote 连接待手动操作**
+  - 已核查：`.gitignore` 覆盖 .env*/node_modules/.next；secrets 扫描零命中
+  - 待手动：① GitHub 网页创建仓库（建议 Private，名为 my-space）② `git remote add origin git@github.com:<用户名>/my-space.git` ③ `git push -u origin master`（gh CLI 未安装，无法代为创建）
   - 完成标准：remote 有完整代码，clone 后 `pnpm install && pnpm build` 可通过
 - [ ] TASK-902：生产构建流水线确认
   - 目标：Node 版本固定（package.json engines 或 .nvmrc）、pnpm 版本一致、CI（GitHub Actions 跑 lint+build）可选
@@ -307,5 +308,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1 已完成（3 项遗留等待外部输入：真实姓名 / 域名 / apple-icon PNG）。下一步进入 Phase 2。**
-- 已完成但散落在 Phase 9 的高优先项：TASK-901（代码未提交、无 remote）建议尽早执行以保护成果。
+- **当前进度：Phase 1、Phase 2 已完成。遗留：TASK-009/010/011（等待真实姓名与域名）、TASK-901 remote 推送（等待手动创建 GitHub 仓库）。下一步进入 Phase 3（Blog）。**

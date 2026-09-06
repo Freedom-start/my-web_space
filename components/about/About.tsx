@@ -6,7 +6,7 @@ import { ownerName } from "@/data/profile";
 const FACTS = [
   { label: "Major", value: "Software Engineering" },
   { label: "Focus", value: "Systems · Web · Algorithms" },
-  { label: "Status", value: "Open to internships" },
+  { label: "Status", value: "Building & learning" },
 ];
 
 /** About：左侧个人档案式介绍，右侧技术星座 */
@@ -32,9 +32,9 @@ export default function About() {
               <p>
                 目前我主要在学习 <span className="text-accent">Python</span> 与{" "}
                 <span className="text-accent">C++</span>，
-                通过算法题训练思维方式，同时用 FastAPI 和 Next.js
-                构建真实的 Web 项目。我对系统底层（操作系统、网络、体系结构）
-                以及它们如何支撑上层应用特别感兴趣。
+                通过算法题训练思维方式，也在用 FastAPI 和 Next.js 动手做项目——
+                你现在看到的这个网站，就是其中之一。我对系统底层
+                （操作系统、网络、体系结构）如何支撑上层应用特别感兴趣。
               </p>
             </div>
           </Reveal>
