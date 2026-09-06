@@ -19,7 +19,7 @@ const statusStyle: Record<
   },
   upcoming: {
     dot: "var(--muted)",
-    label: "text-muted/70",
+    label: "text-muted",
     ring: "border-line",
   },
 };

@@ -16,7 +16,6 @@ const geistMono = Geist_Mono({
 const notoSansSC = Noto_Sans_SC({
   variable: "--font-noto-sc",
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
 });
 
 const DESCRIPTION = `欢迎进入 ${ownerName} 的数字空间：这里记录代码、正在学习的东西，以及不断尝试的新想法。`;

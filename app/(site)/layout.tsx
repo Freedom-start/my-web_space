@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import SceneBackground from "@/components/background/SceneBackground";
+import SceneBackgroundLazy from "@/components/background/SceneBackgroundLazy";
 import FloatingNavbar from "@/components/navigation/FloatingNavbar";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { MotionProvider } from "@/components/providers/MotionProvider";
@@ -12,15 +12,15 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Intro />
-      <SceneBackground />
-      <CursorGlow />
-      <FloatingNavbar />
       <a
         href="#home"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white"
       >
         跳到主要内容
       </a>
+      <SceneBackgroundLazy />
+      <CursorGlow />
+      <FloatingNavbar />
       <SmoothScroll>
         <MotionProvider>
           <main>{children}</main>

@@ -223,7 +223,7 @@ export default async function BlogPostPage({
               />
               返回 Blog
             </Link>
-            <span className="font-mono text-xs text-muted/70">
+            <span className="font-mono text-xs text-muted">
               更多文章陆续上线
             </span>
           </div>

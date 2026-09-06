@@ -23,7 +23,7 @@ export default function Hero() {
 
     // Intro 存在时让标题动画等遮罩开始淡出后再播放（首访遮罩较久，回访者只有轻量 WELCOME BACK）
     const introDone = window.sessionStorage.getItem(INTRO_FLAG);
-    const delayS = introDone ? 0.85 : 1.35;
+    const delayS = introDone ? 0.85 : 0.95;
 
     // 后台标签页 / rAF 饥饿时，GSAP 首帧直接跳到正确时间点，避免 Hero 永远停留在隐藏态
     gsap.ticker.lagSmoothing(0);

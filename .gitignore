@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 个人品牌信息素材表（填写真实信息后不入库）
+/information.txt

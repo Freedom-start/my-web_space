@@ -25,9 +25,16 @@ function seededRandom(seed: number) {
 }
 
 const MOBILE_QUERY = "(max-width: 768px)";
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
 
 function subscribeMobile(callback: () => void) {
   const mq = window.matchMedia(MOBILE_QUERY);
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+
+function subscribeReduced(callback: () => void) {
+  const mq = window.matchMedia(REDUCED_QUERY);
   mq.addEventListener("change", callback);
   return () => mq.removeEventListener("change", callback);
 }
@@ -152,13 +159,24 @@ function ParticleField({ count }: { count: number }) {
   );
 }
 
-/** 首页 3D 背景：性能优先，移动端降低粒子数与分辨率 */
+/** 首页 3D 背景：性能优先，移动端降低粒子数与分辨率；reduced-motion 下完全静止 */
 export default function SceneBackground() {
   const isMobile = useSyncExternalStore(
     subscribeMobile,
     () => window.matchMedia(MOBILE_QUERY).matches,
     () => false
   );
+  const reduced = useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(REDUCED_QUERY).matches,
+    () => false
+  );
+
+  // 保险：极端节流环境下 resize observer 可能失联，挂载后强制 R3F 重新测量一次
+  useEffect(() => {
+    const t = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 300);
+    return () => window.clearTimeout(t);
+  }, []);
 
   return (
     <div
@@ -170,7 +188,7 @@ export default function SceneBackground() {
         dpr={isMobile ? 1 : [1, 1.5]}
         camera={{ position: [0, 0, 10], fov: 60 }}
         gl={{ antialias: false, powerPreference: "high-performance" }}
-        frameloop={isMobile ? "demand" : "always"}
+        frameloop={reduced ? "never" : isMobile ? "demand" : "always"}
       >
         <color attach="background" args={[SCENE_BG]} />
         <fog attach="fog" args={[SCENE_BG, 12, 30]} />
