@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 2 执行完成）
+> 最近更新：2026-09-06（Phase 3：TASK-301~304 完成，博客基础设施上线）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -90,22 +90,22 @@
 
 ## Phase 3 — Blog
 
-- [ ] TASK-301：内容方案选型
-  - 目标：确定 Markdown 管线——推荐 `@next/mdx`（官方、最小依赖），评估是否需要 remark-gfm / shiki 代码高亮
-  - 修改范围：`package.json`、`next.config.ts`、`mdx-components.tsx`
-  - 完成标准：选型结论 + 依赖安装
-- [ ] TASK-302：内容结构搭建
-  - 目标：`content/blog/*.mdx` + frontmatter（slug/title/date/category/readingTime/summary）；`data/posts.ts` 迁移或由 frontmatter 派生
-  - 修改范围：新增 content 目录、`data/posts.ts`
-  - 完成标准：4 篇现有占位文章迁移为 MDX
-- [ ] TASK-303：`/blog/[slug]` 路由
-  - 目标：静态生成（generateStaticParams）+ 不存在 slug 返回 404
-  - 修改范围：新增 `app/blog/[slug]/page.tsx`
-  - 完成标准：构建产物含每篇文章静态页
-- [ ] TASK-304：文章排版系统
-  - 目标：正文排版遵循 DESIGN.md（行高 ≥1.7、15px+、代码块深色、标题层级），不破坏现有深空视觉
-  - 修改范围：文章布局组件 + globals.css 作用域样式
-  - 完成标准：长文阅读舒适、代码块可读
+- [x] TASK-301：内容方案选型 ✅ 2026-09-06
+  - 结论：采用 `@next/mdx` 官方套件（@mdx-js/loader + @mdx-js/react + @types/mdx）；**remark-gfm 与 shiki 暂不引入**——Turbopack 要求 loader options 可序列化，函数形式插件不被支持；当前草稿仅用核心 Markdown 语法。代码块走 CSS 深色样式（TASK-304），语法高亮列为 TASK-310 可选
+  - 修改范围：`package.json`、`next.config.ts`、`mdx-components.tsx`、`types/mdx.d.ts`
+  - 完成标准：选型结论 + 依赖安装 ✅
+- [x] TASK-302：内容结构搭建 ✅ 2026-09-06
+  - 结论：`content/blog/*.mdx` 用原生 `export const meta`（frontmatter 字段全齐 + draft 标识）；`lib/blog.ts` 统一负责扫描/排序/按 slug 获取；`data/posts.ts` 已删除；4 篇占位文章正文为明确标注的草稿提纲（含 DRAFT 横幅，不冒充成品）
+  - 修改范围：content/blog/4 个 .mdx、`lib/blog.ts`、`components/blog/Blog.tsx`（拆出 BlogRow client 组件）
+  - 完成标准：新增 .mdx 文件即自动发布 ✅
+- [x] TASK-303：`/blog/[slug]` 路由 ✅ 2026-09-06
+  - 结论：`app/(site)/blog/[slug]/page.tsx`；共享 chrome 提取到 `app/(site)/layout.tsx`（博客详情继承背景/导航/Footer）；generateStaticParams + dynamicParams=false（4 篇 SSG，不存在 slug 404 实测）；generateMetadata 每篇独立
+  - 修改范围：新增 `app/(site)/layout.tsx`、`app/(site)/blog/[slug]/page.tsx`；`app/page.tsx` 迁移为 `app/(site)/page.tsx`
+  - 完成标准：构建产物含每篇文章静态页 ✅
+- [x] TASK-304：文章排版系统 ✅ 2026-09-06
+  - 结论：`.article-body` 作用域排版——16px/1.85 行高、H2 accent 左边框、accent 圆点列表、mono 序号、紫色引用块、深色代码块（background-soft + 边框 + 横向滚动）、inline code、hr；移动端 15px。全部走 CSS 变量零硬编码
+  - 修改范围：`app/globals.css`
+  - 完成标准：长文阅读舒适、代码块可读 ✅（浏览器截图验证）
 - [ ] TASK-305：阅读进度条
   - 目标：顶部细进度条（滚动驱动，rAF/framer useScroll，节流）
   - 修改范围：文章布局组件
@@ -118,14 +118,18 @@
   - 目标：generateMetadata（title/description/OG 图可用默认 og-image）+ 可选 Article JSON-LD（联动 Phase 8 TASK-804）
   - 修改范围：`app/blog/[slug]/page.tsx`
   - 完成标准：每篇文章独立 meta
-- [ ] TASK-308：Blog 列表接入真实链接
-  - 目标：列表行从 `<article>` 占位改回真实 `<Link>`（上轮安全化处理会回退）
-  - 修改范围：`components/blog/Blog.tsx`
+- [~] TASK-308：Blog 列表接入真实链接（核心已在 TASK-303 中完成：列表行改为 motion.a 指向 /blog/[slug]，点击进入实测通过；剩余：详情页底部补上一篇/下一篇后的导航闭环复核）
+  - 目标：列表行真实链接 + 无错误跳转
+  - 修改范围：`components/blog/BlogRow.tsx`
   - 完成标准：点击进入对应 /blog/[slug]，无错误跳转
 - [ ] TASK-309：（可选）草稿机制
-  - 目标：frontmatter `draft: true` 不参与构建
-  - 修改范围：文章加载工具函数
+  - 目标：frontmatter `draft: true` 不参与构建（当前设计：草稿可见但带 DRAFT 标识，是有意选择；若希望草稿完全隐藏再执行）
+  - 修改范围：`lib/blog.ts` 过滤逻辑
   - 完成标准：草稿不出现在列表与构建产物
+- [ ] TASK-310：（可选）代码语法高亮
+  - 目标：引入 shiki / rehype-pretty-code 做构建时高亮；需解决 Turbopack loader options 序列化限制（或届时改用 webpack 构建该规则）
+  - 修改范围：`next.config.ts`、`app/globals.css`
+  - 完成标准：技术文章代码块带语法配色
 
 ## Phase 4 — Projects
 
@@ -308,4 +312,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、Phase 2 已完成。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1、2 已完成；Phase 3 完成 TASK-301~304（305+ 暂停待指令）。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
