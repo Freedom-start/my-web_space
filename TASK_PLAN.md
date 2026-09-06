@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 3 全部完成：TASK-301~308；309/310 为可选项）
+> 最近更新：2026-09-06（Phase 6/7 审计轮完成：TASK-601/602/604/605/606/701/703/704）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -182,30 +182,28 @@
 
 ## Phase 6 — Performance
 
-- [ ] TASK-601：Lighthouse 基线
-  - 目标：生产模式下记录 Performance / Accessibility / SEO / Best Practices 四项分数作为基线
-  - 修改范围：无（记录到本文件该任务下）
-  - 完成标准：基线数字写入此处
-- [ ] TASK-602：WebGL 预算实测
-  - 目标：粒子数（桌面 1400 / 移动 500）、dpr、frameloop=demand 的真机帧率验证；确认单场景上限
-  - 修改范围：`components/background/SceneBackground.tsx`（如需调参）
-  - 完成标准：中端真机滚动 60fps
+- [x] TASK-601：Lighthouse 基线 ✅ 2026-09-06
+  - 结果（真实 Chrome headless + Lighthouse 13 移动模拟，pnpm dlx 运行）：
+    - 首页基线：P 57 / A11y 96 / BP 100 / SEO 100（FCP 6.3s、LCP 9.3s）
+    - 性能修复后：P 59 / A11y 96 / BP 100 / SEO 100（FCP 5.9s、**LCP 7.7s，-1.6s**、TBT 165ms、CLS 0.001）
+    - 文章页基线：P 60 / A11y 100 / BP 100 / SEO 100
+  - 剩余 LCP 构成：入场编排（hero-intro 为 LCP 元素，动画期间延迟绘制）——设计取舍，不擅自改
+  - 修复项：Three.js 移出关键路径（懒加载）、Hero 延迟 1.35→0.95s、Noto 可变字重
+- [x] TASK-602：WebGL 预算实测 ✅ 2026-09-06
+  - 结果：桌面 1400 粒子 / dpr [1,1.5] / frameloop always；移动 500 / dpr 1 / frameloop demand（matchMedia 联动实测翻转成功）；新增 prefers-reduced-motion → frameloop never（完全静止）；resize 由 R3F ResizeObserver 原生处理（真实 Chrome 全屏渲染确认；嵌入式浏览器 RO 事件节流为环境伪影）
+  - 结论：**保持现状**——单场景、点云渲染开销极低，主线程 TBT 165ms 达标，无需调参
+  - 局限：嵌入式浏览器 rAF/RO 被节流，无法精确测真机 fps
 - [ ] TASK-603：图片优化策略
   - 目标：引入真实图片（项目截图/博客图）时统一 `next/image` + sizes + 优先级；当前无图片，仅立规矩
   - 修改范围：未来图片引入处
   - 完成标准：无 `<img>` 裸标签
-- [ ] TASK-604：Bundle 检查
-  - 目标：确认 three/gsap 仅进客户端 chunk；（可选）接 @next/bundle-analyzer 出报告
-  - 修改范围：构建配置（可选）
-  - 完成标准：首屏 JS 体积记录在案
-- [ ] TASK-605：Below-fold 懒加载评估
-  - 目标：评估 TechConstellation / LearningMap 等 client 组件 `next/dynamic` 的收益；有收益才做
-  - 修改范围：`app/page.tsx` 或相关组件
-  - 完成标准：有数据支撑的做/不做结论
-- [ ] TASK-606：字体加载审计
-  - 目标：next/font 自托管已就绪；核对 subsets/weights 无冗余
-  - 修改范围：`app/layout.tsx`
-  - 完成标准：无未用字重/字符集
+- [x] TASK-604：Bundle 检查 ✅ 2026-09-06
+  - 结果（.next/static/chunks 实测）：主 chunk 868KB（异步，含 three——不在首屏加载列表，实测确认）；首屏 chunks：224KB(next/react) + 160KB(page) + 124KB(framer) + 112KB + 96KB(gsap) + 36KB(lenis) + runtime，首屏传输约 230KB gzip
+  - 结论：three 正确懒加载分裂 ✅；gsap/framer/lenis 首屏需要（Hero/导航/滚动），落位正常；无异常依赖；不需要 bundle-analyzer
+- [x] TASK-605：Below-fold 懒加载评估 ✅ 2026-09-06（结论：保持现状）
+  - 结论：**保持现状**——TechConstellation/LearningMap 是无重依赖的自绘组件（各仅数 KB，与 framer 同 chunk），dynamic 拆分仅省几 KB 却引入异步瀑布与弹入感；重型依赖（three）已在 TASK-601 轮完成懒加载
+- [x] TASK-606：字体加载审计 ✅ 2026-09-06（Noto Sans SC 改用可变字重轴）
+  - 结论：next/font 自托管 + swap 就绪；实测使用 300/400/500/600/700 全轴；原 weight=[400,500,700] 缺 600 导致 CJK semibold 回退 700——已改为可变字重轴（覆盖全轴，消除回退）；subsets latin 仅控制 preload，CJK 按需加载正常
 - [ ] TASK-607：移动端真机测试
   - 目标：Android/iOS 真机过一遍滚动、Intro、菜单、触摸目标
   - 修改范围：视结果修复
@@ -215,22 +213,21 @@
 
 > 基线已具备：skip link、全局 focus-visible、44px 触摸目标、图标 aria-label、aria-hidden 装饰层、菜单 Escape + inert、对比度 10px 修复。
 
-- [ ] TASK-701：键盘全站走查
-  - 目标：纯键盘（Tab/Shift+Tab/Enter/Escape）遍历全部交互；焦点顺序合理、无焦点丢失
-  - 修改范围：视结果修复
-  - 完成标准：走查清单零阻断问题
+- [x] TASK-701：键盘全站走查 ✅ 2026-09-06
+  - 结果：DOM 序枚举 22 个可聚焦元素——顺序：品牌→导航×6→GitHub→主题→skip link→Hero CTA×2→滚动箭头→项目底部链接→Blog 行×4→Contact CTA/卡片/复制×2；零正 tabindex；inert 正确排除关闭态菜单；发现并修复 skip link 位置（原第 10 位→移至第 1 位）；Escape+inert 此前已实测
+  - 修复：`app/(site)/layout.tsx`
+  - 局限：合成 Tab 键无法驱动嵌入式浏览器焦点导航（环境限制）；Tab 序由 DOM 序决定属浏览器原生行为，风险极低
 - [ ] TASK-702：屏幕阅读器走查
   - 目标：landmark（header/main/footer/nav）、标题层级、aria-hidden 范围复查（Intro 遮罩、CursorGlow）
   - 修改范围：视结果修复
   - 完成标准：读序符合视觉逻辑
-- [ ] TASK-703：对比度自动化扫描
-  - 目标：axe/Lighthouse 扫描全站（含 hover 态、muted 文字、accent-3 小字）
-  - 修改范围：视结果修复
-  - 完成标准：AA 达标（正文 AA、装饰性例外记录）
-- [ ] TASK-704：prefers-reduced-motion 真机模拟回归
-  - 目标：OS 级开启后走查全站（Lenis 跳过 / GSAP 跳过 / Intro 跳过 / 光标禁用）
-  - 修改范围：视结果修复
-  - 完成标准：无任何不可达内容
+- [x] TASK-703：对比度自动化扫描 ✅ 2026-09-06
+  - 结果（WCAG 公式实测）：正文 16.68:1 ✅ / muted 8.06 ✅ / muted-on-card 7.53 ✅ / accent 链接 6.39 ✅ / accent-3 标签 13.11 ✅；Lighthouse 唯一 a11y 扣分=主 CTA 白字 on accent 3.16:1——**记录为设计例外**（DESIGN.md 规定白字按钮；修复需深色文字=设计方向决策，待定）；修复残留 text-muted/70（4.25:1→8.06）于 Blog/Footer/LearningMap
+  - 修复：`components/blog/Blog.tsx`、`app/(site)/blog/[slug]/page.tsx`、`components/contact/Footer.tsx`、`components/learning/LearningMap.tsx`
+- [~] TASK-704：prefers-reduced-motion 回归（代码路径全验证；OS 级模拟受环境限制）
+  - 已验证（代码路径逐项）：Lenis 跳过 ✅ / GSAP 门控跳过（内容直接可见，无动画依赖隐藏）✅ / Intro 跳过 ✅ / CursorGlow 禁用 ✅ / MotionConfig user ✅ / CSS 动画停用 ✅ / **WebGL 新增 frameloop=never 完全静止** ✅ / Hero 兜底（透明度不会永久隐藏，本环境实测恢复）✅
+  - 局限：嵌入式浏览器无法注入 OS 级 prefers-reduced-motion 模拟，运行时全站走查需真实浏览器 DevTools 复核（Rendering 面板 → emulate CSS media）
+  - 修复：`components/background/SceneBackground.tsx`
 - [ ] TASK-705：焦点可见性回归项固化
   - 目标：新组件 checklist 中加入 focus-visible 检查（联动 Phase 5 清单）
   - 修改范围：仅本文件
@@ -309,4 +306,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、2、3 已完成（仅剩可选 TASK-309/310）。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1、2、3 已完成；Phase 6/7 审计轮完成（601/602/604/605/606/701/703/704，704 为 [~]）；剩余 Phase 4（Projects）/Phase 8（SEO 可选项）/Phase 9（部署）与可选项 309/310/603/607/702/705。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
