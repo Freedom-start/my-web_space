@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 3：TASK-301~304 完成，博客基础设施上线）
+> 最近更新：2026-09-06（Phase 3 全部完成：TASK-301~308；309/310 为可选项）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -106,22 +106,19 @@
   - 结论：`.article-body` 作用域排版——16px/1.85 行高、H2 accent 左边框、accent 圆点列表、mono 序号、紫色引用块、深色代码块（background-soft + 边框 + 横向滚动）、inline code、hr；移动端 15px。全部走 CSS 变量零硬编码
   - 修改范围：`app/globals.css`
   - 完成标准：长文阅读舒适、代码块可读 ✅（浏览器截图验证）
-- [ ] TASK-305：阅读进度条
-  - 目标：顶部细进度条（滚动驱动，rAF/framer useScroll，节流）
-  - 修改范围：文章布局组件
-  - 完成标准：60fps、reduced-motion 降级为无进度条
-- [ ] TASK-306：上一篇 / 下一篇
-  - 目标：文章底部前后导航，沿用 Blog 列表 hover 语言
-  - 修改范围：`app/blog/[slug]/page.tsx`
-  - 完成标准：导航正确、风格统一
-- [ ] TASK-307：文章 SEO
-  - 目标：generateMetadata（title/description/OG 图可用默认 og-image）+ 可选 Article JSON-LD（联动 Phase 8 TASK-804）
-  - 修改范围：`app/blog/[slug]/page.tsx`
-  - 完成标准：每篇文章独立 meta
-- [~] TASK-308：Blog 列表接入真实链接（核心已在 TASK-303 中完成：列表行改为 motion.a 指向 /blog/[slug]，点击进入实测通过；剩余：详情页底部补上一篇/下一篇后的导航闭环复核）
-  - 目标：列表行真实链接 + 无错误跳转
-  - 修改范围：`components/blog/BlogRow.tsx`
-  - 完成标准：点击进入对应 /blog/[slug]，无错误跳转
+- [x] TASK-305：阅读进度条 ✅ 2026-09-06
+  - 结论：`components/blog/ReadingProgress.tsx`——framer useScroll + useSpring，scaleX transform-only（零逐帧 state 更新）；顶部固定 3px accent 色；reduced-motion 下不渲染
+  - 修改范围：新增 `components/blog/ReadingProgress.tsx`，详情页引入
+  - 完成标准：60fps、reduced-motion 降级为无进度条 ✅（实测 scaleX 0→1）
+- [x] TASK-306：上一篇 / 下一篇 ✅ 2026-09-06
+  - 结论：`lib/blog.ts` 新增 getAdjacentPosts（档案顺序：新→旧；首篇无 Previous、末篇无 Next 实测优雅降级）；详情页底部双卡 Editorial 导航（← PREVIOUS / NEXT →），hover 语言与列表一致
+  - 修改范围：`lib/blog.ts`、`app/(site)/blog/[slug]/page.tsx`
+  - 完成标准：导航正确、风格统一 ✅（点击流 A→Next→B→Prev→A 实测）
+- [x] TASK-307：文章 SEO ✅ 2026-09-06
+  - 结论：generateMetadata 扩展——canonical（/blog/[slug] 真实路径）+ og:type=article + publishedTime（frontmatter 真实日期）+ twitter 全套；Article JSON-LD（headline/description/datePublished/author=ownerName/url，零新依赖，无伪造信息）；OG 图复用全站 opengraph-image
+  - 修改范围：`app/(site)/blog/[slug]/page.tsx`、`data/profile.ts`（新增 siteUrl 单一来源）
+  - 完成标准：每篇文章独立 meta ✅（curl 验证 canonical/og/ld+json）
+- [x] TASK-308：Blog 列表接入真实链接 ✅ 2026-09-06（导航闭环完整实测：Blog → 文章 A → Next → 文章 B → Previous → 文章 A → 返回 Blog；键盘可达，无 #blog 假链接残留）
 - [ ] TASK-309：（可选）草稿机制
   - 目标：frontmatter `draft: true` 不参与构建（当前设计：草稿可见但带 DRAFT 标识，是有意选择；若希望草稿完全隐藏再执行）
   - 修改范围：`lib/blog.ts` 过滤逻辑
@@ -312,4 +309,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1、2 已完成；Phase 3 完成 TASK-301~304（305+ 暂停待指令）。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1、2、3 已完成（仅剩可选 TASK-309/310）。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**

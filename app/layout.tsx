@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans_SC } from "next/font/google";
-import { siteName, ownerName } from "@/data/profile";
+import { siteName, ownerName, siteUrl } from "@/data/profile";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +23,7 @@ const DESCRIPTION = `欢迎进入 ${ownerName} 的数字空间：这里记录代
 const TITLE = `${siteName} — Digital Universe`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://freedom.space"),
+  metadataBase: new URL(siteUrl),
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/" },

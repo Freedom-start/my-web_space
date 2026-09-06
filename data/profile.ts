@@ -13,6 +13,9 @@ export const ownerName = "Freedom";
 /** 网站品牌名：用于 Navbar / Intro / metadata / Footer 等品牌位置；Hero 不机械重复它 */
 export const siteName = "Freedom's Space";
 
+/** 站点根地址：metadataBase / canonical / JSON-LD 统一引用（购买真实域名后只改这里） */
+export const siteUrl = "https://freedom.space";
+
 export const githubUrl = "https://github.com/Freedom-start";
 export const email = "freedomwahh@gmail.com";
 export const wechat = "XQ_0Freedom";

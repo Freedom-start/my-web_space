@@ -52,3 +52,21 @@ export async function getPost(slug: string): Promise<Post | null> {
   const mod = await importPostModule(slug);
   return { ...mod.meta, slug, Content: mod.default };
 }
+
+export interface AdjacentPosts {
+  /** 上一篇：档案顺序中的前一篇（更新）；第一篇为 null */
+  prev: PostMeta | null;
+  /** 下一篇：档案顺序中的后一篇（更早）；最后一篇为 null */
+  next: PostMeta | null;
+}
+
+/** 按档案顺序（新 → 旧）计算相邻文章；首篇无 Previous，末篇无 Next */
+export async function getAdjacentPosts(slug: string): Promise<AdjacentPosts> {
+  const posts = await getAllPosts();
+  const index = posts.findIndex((p) => p.slug === slug);
+  if (index === -1) return { prev: null, next: null };
+  return {
+    prev: index > 0 ? posts[index - 1] : null,
+    next: index < posts.length - 1 ? posts[index + 1] : null,
+  };
+}
