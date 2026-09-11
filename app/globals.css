@@ -10,6 +10,8 @@
   --accent-3: #38e8d0;
   --line: rgba(140, 160, 255, 0.14);
   --card: rgba(16, 20, 42, 0.55);
+  /* 自托管 Noto Sans SC（见 app/layout.tsx），替代 next/font/google 的变量注入 */
+  --font-noto-sc: "Noto Sans SC Variable";
 }
 
 [data-theme="light"] {
