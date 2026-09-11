@@ -1,8 +1,81 @@
 # TASK_PLAN.md — Freedom's Space 长期开发任务计划
 
+# CURRENT PROJECT STATUS
+
+| 字段 | 值 |
+|---|---|
+| Project | Freedom's Space — 个人数字空间（Next.js 个人网站） |
+| Current Version | 0.1.0（package.json） |
+| Current Branch | master |
+| Latest Commit | `09c5ef1` docs: complete Phase 5/6/7/8 audit and documentation tasks（2026-09-11） |
+| Website Status | 开发完成：首页/Hero/WebGL/Blog(MDX)/SEO/CI 全部可用；dev 与 build 均通过；**尚未部署到公网** |
+| Dev Command | `pnpm dev`（http://localhost:3000，Turbopack） |
+| Build Command | `pnpm build`（验证：`pnpm lint` → `pnpm build`） |
+| GitHub Repository | https://github.com/Freedom-start/my-web_space（推送依赖本地代理 127.0.0.1:7892） |
+| Main Stack | Next.js 16 (App Router / Turbopack) · TypeScript · Tailwind CSS 4 · MDX · Three.js / R3F · GSAP · Framer Motion · Lenis |
+
+> 字体：Geist + Noto Sans SC 已自托管（geist 包 + @fontsource-variable/noto-sans-sc），不依赖 fonts.gstatic.com（曾因该域名不稳定导致 Turbopack dev 报字体 Module not found，已修复）。
+
+# COMPLETED PHASES
+
+| Phase | 状态 | 说明 |
+|---|---|---|
+| Phase 1 — Brand | ✅ 完成 | 遗留 009/010/011 依赖用户输入（见 BLOCKED） |
+| Phase 2 — Content | ✅ 完成 | About / Skills / Contact / Footer 真实内容 |
+| Phase 3 — Blog | ✅ 完成 | MDX 管线 + 4 篇草稿文章；309/310 为可选 |
+| Phase 5 — Interactions | ✅ 完成 | 501/502/503/504（文档/评估/审计，禁止堆料） |
+| Phase 6 — Performance | ✅ 完成（607 待真机） | Lighthouse / WebGL 预算 / Bundle / 字体审计 |
+| Phase 7 — Accessibility | ✅ 完成 | 键盘 / 屏幕阅读器 / 对比度 / reduced-motion |
+| Phase 8 — SEO | ✅ 完成（803/805 待域名/Apple icon） | sitemap / robots / JSON-LD / 文章 metadata |
+| Phase 9 — Deployment | ◐ 部分 | 901/902/903 完成；904~909 待域名/部署 |
+
+# BLOCKED / WAITING FOR USER
+
+| 任务 | 依赖 | 说明 |
+|---|---|---|
+| TASK-009 | 用户提供真实显示名 | `ownerName = "Freedom"` 待替换（单点：data/profile.ts） |
+| TASK-010 / TASK-803 / TASK-907 | 用户购买并确认真实域名 | metadataBase / canonical / OG 域名目前为 `https://freedom.space` 占位 |
+| TASK-011 / TASK-805 | 用户确认需要 iOS 主屏图标 | apple-icon.png（180×180，iOS 不支持 SVG） |
+| TASK-607 | 用户在 Android/iOS 真机上测试 | 移动端真机验证（滚动/Intro/菜单/触摸目标） |
+| Phase 4（TASK-401~407） | 用户开发真实项目并上传 GitHub | Projects 区域当前保持 XXXX Project / Coming Soon 占位，不得虚构 |
+| TASK-904~909 | 用户决定域名 + 选择 hosting 平台 | 域名购买、Vercel 部署、HTTPS、上线收尾 |
+
+# OPTIONAL（非必要增强，不做不影响上线）
+
+| 任务 | 说明 |
+|---|---|
+| TASK-309 | 草稿完全隐藏机制（当前 DRAFT 可见是有意设计，仅需用户确认是否改） |
+| TASK-310 | 代码语法高亮（shiki；受 Turbopack loader 序列化限制，需时再评估） |
+| TASK-407 | pinned repos 自动同步脚本（依赖 Phase 4 先落地） |
+
+# NEXT RECOMMENDED ACTION
+
+**当前没有必要继续堆叠独立 UI 功能——网站工程侧已就绪，剩余任务几乎全部依赖真实素材或用户决策。**
+
+推荐下一阶段（按优先级）：
+
+1. **A. 填写个人信息素材**：真实姓名（解锁 TASK-009）与真实邮箱/微信验证
+2. **B. 开发真实项目并上传 GitHub**：完成后执行 Phase 4，替换 XXXX Project / Coming Soon 占位
+3. **C. 决定域名并部署**：购买域名（解锁 TASK-010/803/904~907）→ Vercel 部署（TASK-905）→ 上线冒烟（TASK-908/909）
+
+# DEVELOPMENT RULES
+
+1. **DESIGN.md 是视觉基准**：任何 UI 改动不得绕过；冲突时以 DESIGN.md 为准并同步修订文档
+2. **已有动效不得重复堆叠**：新增任何效果前先对照 Phase 5 动效清单（TASK-501，15 项）；禁止再添粒子/光晕/3D
+3. **不虚构个人经历**：About / Skills / Learning 只写真实内容
+4. **不虚构项目**：Projects 保持占位直到真实项目接入（Phase 4）
+5. **使用 lint / build 验证**：每次改动后 `pnpm lint` + `pnpm build`
+6. **保护个人信息**：不提交个人信息模板、不在代码中写死敏感联系方式
+7. **不提交 secrets**：.gitignore 已覆盖 .env*；未来 token 只放 .env.local
+8. **修改前检查 git status**：不覆盖未提交改动，不 force push，不重写历史
+
+---
+
+## 任务详情（历史记录，保留不动）
+
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-11（Phase 5/6/7/8 文档与审计任务批量完成；字体模块错误修复）
+> 最近更新：2026-09-11（状态汇总区重组；历史任务记录保留）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -61,7 +134,7 @@
 
 ---
 
-## Phase 2 — Content（当前位置）
+## Phase 2 — Content ✅（已完成）
 
 - [x] TASK-101：About 真实内容 ✅ 2026-09-06（Status 改 Building & learning；简介注明本站即实践项目）
   - 目标：两段自述 + FACTS（Major / Focus / Status）替换为真实、可长期成立的内容；确认 `Status: Open to internships` 是否属实
@@ -88,7 +161,7 @@
   - 修改范围：`components/projects/Projects.tsx` 描述行
   - 完成标准：文案与占位状态自洽
 
-## Phase 3 — Blog
+## Phase 3 — Blog ✅（已完成，309/310 为可选）
 
 - [x] TASK-301：内容方案选型 ✅ 2026-09-06
   - 结论：采用 `@next/mdx` 官方套件（@mdx-js/loader + @mdx-js/react + @types/mdx）；**remark-gfm 与 shiki 暂不引入**——Turbopack 要求 loader options 可序列化，函数形式插件不被支持；当前草稿仅用核心 Markdown 语法。代码块走 CSS 深色样式（TASK-304），语法高亮列为 TASK-310 可选
@@ -128,7 +201,7 @@
   - 修改范围：`next.config.ts`、`app/globals.css`
   - 完成标准：技术文章代码块带语法配色
 
-## Phase 4 — Projects
+## Phase 4 — Projects ⏸（阻塞：等待真实项目，见 BLOCKED / WAITING FOR USER）
 
 - [ ] TASK-401：GitHub 数据来源方案
   - 目标：选定 GitHub REST API 拉取 pinned/repos 的方式与缓存策略（build 时拉取或手动导出 JSON）
@@ -292,7 +365,7 @@
     - Article JSON-LD：headline/description/datePublished/author=ownerName/url/mainEntityOfPage，单实例不重复 ✅
   - 完成标准：4 篇全部通过 ✅
 
-## Phase 9 — Deployment
+## Phase 9 — Deployment ◐（901/902/903 完成，904~909 待域名/部署）
 
 - [x] TASK-901：⚠️ 高优先——GitHub 仓库与首次提交 ✅ 2026-09-06
   - 目标：完整代码已推送到 github.com/Freedom-start/my-web_space（master 分支，含 v1 与 Phase 2 两个提交）
@@ -337,4 +410,6 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1/2/3 完成、Phase 5 文档与评估完成（501/502/503/504）、Phase 6 完成 601/602/603/604/605/606、Phase 7 完成 701/702/703/704/705、Phase 8 完成 801/802/804/806、Phase 9 完成 901/902/903。剩余：TASK-803/805（待域名）、TASK-904~909（域名/部署上线）、Phase 4（Projects）、可选 309/310/607。遗留：TASK-009/010/011（等待真实姓名与域名）。**
+> 详细状态见顶部 `CURRENT PROJECT STATUS` / `COMPLETED PHASES` / `BLOCKED / WAITING FOR USER` / `OPTIONAL` 区域（本节仅保留历史标记，避免重复）。
+>
+> 历史：Phase 1/2/3 完成（2026-09-06）；Phase 5/6/7/8 审计与文档任务完成（2026-09-11）；字体自托管修复（2026-09-11）。
