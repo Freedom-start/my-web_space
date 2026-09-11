@@ -2,7 +2,7 @@
 
 > 品牌叙事：**Welcome to my digital space.**（B — Digital Space / Immersive）
 > 设计基准：`DESIGN.md`（核心视觉方向不可绕过）
-> 最近更新：2026-09-06（Phase 9 部署准备：TASK-902/903 完成；704 升级为 [x]）
+> 最近更新：2026-09-11（Phase 5/6/7/8 文档与审计任务批量完成；字体模块错误修复）
 > 状态标记：`[x]` 已完成 · `[ ]` 待执行 · `[~]` 进行中
 > 任务编号规则：`{Phase 号}{两位序号}`（如 TASK-101）；新增任务按各 Phase 追加，不重排已有编号。
 > 执行规则：动效类新增必须先核对 Phase 5 的已有动效清单，禁止重复添加粒子/光晕/3D；涉及 `DESIGN.md` 冲突时以 DESIGN.md 为准并同步修订文档。
@@ -163,22 +163,37 @@
 
 > 已有动效清单（新增任何效果前先对照）：Hero GSAP 逐字 + 视差 + Magnetic、WordReveal（H2）、ScrambleText（eyebrow）、Marquee、SectionDivider、TiltCard + 聚光、Blog 行 hover 位移、Constellation/Learning 入场、CursorGlow、Intro、Lenis、WebGL 背景、glow-ring hover。
 
-- [ ] TASK-501：动效清单固化
-  - 目标：把上表写入本文件并保持更新，作为新增动效的前置检查
-  - 修改范围：仅本文件
-  - 完成标准：任何 PR/修改可对照查重
-- [ ] TASK-502：Reduced Motion 回归项固化
-  - 目标：将"改动画必测 reduced-motion 三路径（首访/回访/跳过）"固化为检查清单
-  - 修改范围：仅本文件（清单），代码已具备降级
-  - 完成标准：清单存在并在每次动效改动后执行
-- [ ] TASK-503：（条件触发）路由转场评估
-  - 目标：Blog 详情上线后评估 view-transition / 模板转场是否必要；默认不加
-  - 修改范围：无（评估任务）
-  - 完成标准：有明确"做/不做"结论并记录
-- [ ] TASK-504：（条件触发）新交互语言一致性检查
-  - 目标：Blog 真实链接（TASK-308）与项目链接接入后，确认 hover/focus 语言与全站一致
-  - 修改范围：受影响组件
-  - 完成标准：色彩/位移/时长三要素与既有模式一致
+- [x] TASK-501：动效清单固化 ✅ 2026-09-11
+  - 已固化清单（新增动效前必须对照，禁止重复）：
+    1. Hero H1：GSAP 逐字 rotateX + 上移 + 鼠标视差 + Magnetic
+    2. Section H2：WordReveal 逐词 rotateX/上移（scroll-triggered）
+    3. Eyebrow/Label：ScrambleText 字符扰动→落定
+    4. CTA：Magnetic 磁吸 + 光泽扫过（pointer-fine 才启用）
+    5. 项目卡：SpotlightCard（radial-gradient 跟随指针）+ 3D tilt（max 4°）
+    6. 全局背景：Three.js 粒子星场 + 鼠标视差 + 滚动位移；CSS 噪点覆盖层
+    7. 宣言横滚带：Marquee（纯 CSS translateX keyframes）
+    8. Blog 行 hover：编号/标题位移 + 边框高亮 + 箭头淡入
+    9. Constellation/Learning 入场：framer whileInView
+    10. CursorGlow：桌面端克制光标跟随（hover: hover + pointer: fine + 非 reduced-motion）
+    11. Intro：启动日志 + 计数 + 回访 WELCOME BACK
+    12. Lenis 惯性滚动
+    13. glow-ring hover：卡片光晕
+    14. SectionDivider：分隔线
+    15. TiltCard：3D 倾斜
+  - 完成标准：任何 PR/修改可对照查重 ✅
+- [x] TASK-502：Reduced Motion 回归项固化 ✅ 2026-09-11
+  - 检查清单（改动画必测，三路径）：
+    1. 首访（无 sessionStorage）：Intro 完整播放 → 内容正常渲染
+    2. 回访（有 sessionStorage）：轻量 WELCOME BACK → 内容正常渲染
+    3. prefers-reduced-motion：Intro 跳过、Hero 动画跳过、WebGL frameloop=never、ReadingProgress 不渲染、Marquee/float-y/pulse-dot animation:none
+  - 工具：系统 Chrome headless `--force-prefers-reduced-motion` + dump-dom / 截图
+  - 完成标准：清单存在并在每次动效改动后执行 ✅
+- [x] TASK-503：（条件触发）路由转场评估 ✅ 2026-09-11
+  - 结论：**不做**。理由：(1) 站点已有丰富的签名动效（GSAP/framer/Three.js），view-transition 会增加一层复杂度且与现有动画可能冲突；(2) 博客详情页已有 ReadingProgress + Reveal 入场，转场感知已足够；(3) view-transition API 浏览器支持仍在演进，维护成本高；(4) 单页应用内锚点导航（#section）已足够流畅。
+- [x] TASK-504：（条件触发）新交互语言一致性检查 ✅ 2026-09-11
+  - 审计范围：BlogRow / AdjacentLink / 返回 Blog 链接
+  - 结果：hover 均用 accent 色（border-accent/40~50、text-accent），transition-colors duration-300 统一；focus-visible 继承全局 `a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px }`；色彩/位移/时长三要素与全站一致
+  - 完成标准：一致 ✅（无需改动）
 
 ## Phase 6 — Performance
 
@@ -193,10 +208,14 @@
   - 结果：桌面 1400 粒子 / dpr [1,1.5] / frameloop always；移动 500 / dpr 1 / frameloop demand（matchMedia 联动实测翻转成功）；新增 prefers-reduced-motion → frameloop never（完全静止）；resize 由 R3F ResizeObserver 原生处理（真实 Chrome 全屏渲染确认；嵌入式浏览器 RO 事件节流为环境伪影）
   - 结论：**保持现状**——单场景、点云渲染开销极低，主线程 TBT 165ms 达标，无需调参
   - 局限：嵌入式浏览器 rAF/RO 被节流，无法精确测真机 fps
-- [ ] TASK-603：图片优化策略
-  - 目标：引入真实图片（项目截图/博客图）时统一 `next/image` + sizes + 优先级；当前无图片，仅立规矩
-  - 修改范围：未来图片引入处
-  - 完成标准：无 `<img>` 裸标签
+- [x] TASK-603：图片优化策略 ✅ 2026-09-11
+  - 规矩（未来引入真实图片时遵守）：
+    1. 所有图片必须用 `next/image`（`<Image>`），禁止裸 `<img>` 标签
+    2. 必须显式声明 `sizes`（响应式断点），避免默认 100vw 浪费带宽
+    3. 首屏关键图片加 `priority`；非首屏懒加载（默认）
+    4. 项目截图放 `public/projects/`，博客图放 `public/blog/`，按 slug 命名
+    5. 无图项目回退现有抽象视觉（ProjectVisual 条件渲染已支持）
+  - 完成标准：规矩文档化 ✅（待 Phase 4 引入真实图片时执行）
 - [x] TASK-604：Bundle 检查 ✅ 2026-09-06
   - 结果（.next/static/chunks 实测）：主 chunk 868KB（异步，含 three——不在首屏加载列表，实测确认）；首屏 chunks：224KB(next/react) + 160KB(page) + 124KB(framer) + 112KB + 96KB(gsap) + 36KB(lenis) + runtime，首屏传输约 230KB gzip
   - 结论：three 正确懒加载分裂 ✅；gsap/framer/lenis 首屏需要（Hero/导航/滚动），落位正常；无异常依赖；不需要 bundle-analyzer
@@ -217,10 +236,12 @@
   - 结果：DOM 序枚举 22 个可聚焦元素——顺序：品牌→导航×6→GitHub→主题→skip link→Hero CTA×2→滚动箭头→项目底部链接→Blog 行×4→Contact CTA/卡片/复制×2；零正 tabindex；inert 正确排除关闭态菜单；发现并修复 skip link 位置（原第 10 位→移至第 1 位）；Escape+inert 此前已实测
   - 修复：`app/(site)/layout.tsx`
   - 局限：合成 Tab 键无法驱动嵌入式浏览器焦点导航（环境限制）；Tab 序由 DOM 序决定属浏览器原生行为，风险极低
-- [ ] TASK-702：屏幕阅读器走查
-  - 目标：landmark（header/main/footer/nav）、标题层级、aria-hidden 范围复查（Intro 遮罩、CursorGlow）
-  - 修改范围：视结果修复
-  - 完成标准：读序符合视觉逻辑
+- [x] TASK-702：屏幕阅读器走查 ✅ 2026-09-11（代码级审计，无真实屏幕阅读器）
+  - Landmark 完整：`<header>`（FloatingNavbar）→ `<nav aria-label="主导航">` → `<main>` → `<footer>` → `<article>`（博客详情）→ `<nav aria-label="文章导航">`（相邻文章）
+  - 标题层级无跳跃：Hero `<h1>` / 博客详情 `<h1>` → SectionHeading `<h2>` → 文章正文 `h2/h3`
+  - aria-hidden 正确：CursorGlow 包装器、Intro 遮罩、装饰点、导航活跃指示器、博客分隔线、相邻导航占位符
+  - Skip link 首位（`#home`），菜单 inert+aria-hidden+Escape 已实测
+  - 完成标准：读序符合视觉逻辑 ✅（无需改动）
 - [x] TASK-703：对比度自动化扫描 ✅ 2026-09-06
   - 结果（WCAG 公式实测）：正文 16.68:1 ✅ / muted 8.06 ✅ / muted-on-card 7.53 ✅ / accent 链接 6.39 ✅ / accent-3 标签 13.11 ✅；Lighthouse 唯一 a11y 扣分=主 CTA 白字 on accent 3.16:1——**记录为设计例外**（DESIGN.md 规定白字按钮；修复需深色文字=设计方向决策，待定）；修复残留 text-muted/70（4.25:1→8.06）于 Blog/Footer/LearningMap
   - 修复：`components/blog/Blog.tsx`、`app/(site)/blog/[slug]/page.tsx`、`components/contact/Footer.tsx`、`components/learning/LearningMap.tsx`
@@ -228,10 +249,14 @@
   - 方法：系统 Chrome headless `--force-prefers-reduced-motion`（真实 OS 级媒体查询模拟）+ dump-dom / 截图，覆盖 / 与 /blog/fastapi-from-0-to-1
   - 结果：Lenis 类名无 ✅ / Hero 无隐藏内联样式（内容完整可见）✅ / Intro 无残留 ✅ / ReadingProgress 合理降级（不渲染）✅ / WebGL frameloop=never 静止 ✅ / 文章正文可访问 ✅ / Navbar 正常 ✅
   - 修复：`components/background/SceneBackground.tsx`（本轮新增 frameloop=never 分支）
-- [ ] TASK-705：焦点可见性回归项固化
-  - 目标：新组件 checklist 中加入 focus-visible 检查（联动 Phase 5 清单）
-  - 修改范围：仅本文件
-  - 完成标准：清单存在
+- [x] TASK-705：焦点可见性回归项固化 ✅ 2026-09-11
+  - 新组件 checklist（联动 Phase 5 动效清单）：
+    1. 所有可交互元素（a/button/input/summary/[role=button]）必须有 `:focus-visible` 样式
+    2. 默认样式：`outline: 2px solid var(--accent); outline-offset: 2~3px; border-radius` 匹配元素形状
+    3. 自定义 focus 样式不得降低对比度（≥ 3:1 against background）
+    4. 装饰性元素（aria-hidden）不得接收焦点（tabindex="-1" 或 inert）
+    5. 菜单/弹窗关闭后焦点应返回触发元素
+  - 完成标准：清单存在 ✅
 
 ## Phase 8 — SEO
 
@@ -257,10 +282,15 @@
   - 目标：同 Phase 1 TASK-011，此处为 SEO/品牌入口复查
   - 修改范围：`app/apple-icon.png`
   - 完成标准：同上
-- [ ] TASK-806：（博客上线后）文章级 metadata 复查
-  - 目标：每篇文章 title/OG/dates 唯一且准确
-  - 修改范围：blog 路由
-  - 完成标准：抽查 3 篇通过
+- [x] TASK-806：（博客上线后）文章级 metadata 复查 ✅ 2026-09-11
+  - 抽查 4 篇（what-is-http / fastapi-from-0-to-1 / dijkstra-shortest-path / git-learning-notes）：
+    - title：`${post.title} — ${siteName}` 唯一 ✅
+    - description：post.summary（frontmatter 真实摘要）✅
+    - canonical：`/blog/${slug}`（Next.js 自动解析为绝对 URL against metadataBase）✅
+    - og.type=article / og.url / og.title / og.description / og.publishedTime（frontmatter 真实日期）✅
+    - twitter.card=summary_large_image / title / description ✅
+    - Article JSON-LD：headline/description/datePublished/author=ownerName/url/mainEntityOfPage，单实例不重复 ✅
+  - 完成标准：4 篇全部通过 ✅
 
 ## Phase 9 — Deployment
 
@@ -307,4 +337,4 @@
 
 ## 执行状态总览
 
-- **当前进度：Phase 1/2/3 完成、Phase 6/7 审计完成、Phase 8 完成 801/802/804、Phase 9 完成 901/902/903。剩余：TASK-803/805（待域名）、TASK-904~909（域名/部署上线）、Phase 4（Projects）、可选 309/310/603/607/702/705。遗留：TASK-009/010/011（等待真实姓名与域名）。下一步进入 Phase 3（Blog）。**
+- **当前进度：Phase 1/2/3 完成、Phase 5 文档与评估完成（501/502/503/504）、Phase 6 完成 601/602/603/604/605/606、Phase 7 完成 701/702/703/704/705、Phase 8 完成 801/802/804/806、Phase 9 完成 901/902/903。剩余：TASK-803/805（待域名）、TASK-904~909（域名/部署上线）、Phase 4（Projects）、可选 309/310/607。遗留：TASK-009/010/011（等待真实姓名与域名）。**
